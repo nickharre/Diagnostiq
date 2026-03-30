@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balto — Infrastructure Advisory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo">BALTO<span class="accent">.</span></a>
+      <a href="#survey" class="nav-cta">Start Assessment →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <canvas id="blizzard"></canvas>
+    <div class="hero-content">
+      <p class="hero-tag">Infrastructure Advisory</p>
+      <h1 class="hero-headline">Your Infrastructure Tax<br>is Measurable.<br><span class="accent">And Avoidable.</span></h1>
+      <p class="hero-sub">Balto quantifies the hidden drag on your infrastructure programme—then eliminates it.</p>
+      <a href="#survey" class="btn-primary">Take the Assessment</a>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- SURVEY -->
+  <section class="survey" id="survey">
+    <div class="survey-container">
+      <div class="survey-header">
+        <h2>Infrastructure Maturity Assessment</h2>
+        <p class="survey-intro">20 questions across four dimensions — rate each statement on a 5-point scale.</p>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <p class="step-label" id="stepLabel">Plan — Question 1 of 20</p>
+      </div>
+      <div class="survey-body" id="surveyBody">
+        <!-- Steps injected by JS -->
+      </div>
+      <div class="survey-nav">
+        <button class="btn-secondary" id="prevBtn" disabled>← Back</button>
+        <button class="btn-primary" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALYSING OVERLAY -->
+  <section class="analysing-overlay hidden" id="analysingOverlay">
+    <div class="analysing-content">
+      <svg class="analysing-dog" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Sled dog silhouette -->
+        <ellipse cx="38" cy="30" rx="20" ry="10" fill="currentColor" opacity="0.9"/>
+        <ellipse cx="58" cy="22" rx="8" ry="7" fill="currentColor" opacity="0.9"/>
+        <!-- Ear -->
+        <ellipse cx="62" cy="16" rx="3" ry="5" fill="currentColor" opacity="0.7" transform="rotate(-15 62 16)"/>
+        <!-- Eye -->
+        <circle cx="61" cy="21" r="1.5" fill="#1a1a1f"/>
+        <!-- Snout -->
+        <ellipse cx="66" cy="24" rx="4" ry="2.5" fill="currentColor" opacity="0.8"/>
+        <!-- Legs -->
+        <rect x="26" y="38" width="3" height="14" rx="1.5" fill="currentColor" opacity="0.8"/>
+        <rect x="34" y="38" width="3" height="14" rx="1.5" fill="currentColor" opacity="0.8"/>
+        <rect x="44" y="38" width="3" height="12" rx="1.5" fill="currentColor" opacity="0.8"/>
+        <rect x="50" y="38" width="3" height="12" rx="1.5" fill="currentColor" opacity="0.8"/>
+        <!-- Tail -->
+        <path d="M18 28 Q10 18 14 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.7"/>
+      </svg>
+      <p class="analysing-label">Analysing responses<span class="analysing-dots"><span>.</span><span>.</span><span>.</span></span></p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section class="dashboard hidden" id="dashboard">
+    <div class="dashboard-container">
+      <h2>Your Infrastructure Maturity Profile</h2>
+      <p class="dash-sub">Based on your responses, here's where the risk lives.</p>
+      <div class="dashboard-grid">
+        <div class="card card-radar">
+          <h3>Dimension Radar</h3>
+          <canvas id="radarChart" width="360" height="360"></canvas>
+        </div>
+        <div class="card card-gauges">
+          <h3>Key Metrics</h3>
+          <div class="gauges" id="gauges"></div>
+        </div>
+        <div class="card card-frontline" id="frontlineCard">
+          <h3>Frontline Reality</h3>
+          <p class="frontline-text" id="frontlineText"></p>
+          <div class="frontline-bars" id="frontlineBars"></div>
+        </div>
+        <div class="card card-summary">
+          <h3>Summary</h3>
+          <p id="summaryText"></p>
+          <div class="score-badge" id="scoreBadge"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER CTA -->
+  <footer class="footer" id="footer">
+    <div class="footer-inner">
+      <h2>Ready to eliminate the tax?</h2>
+      <p>Our framework maps your infrastructure debt in weeks, not quarters.</p>
+      <a href="mailto:hello@balto.dev" class="btn-primary btn-lg">Book a Balto Framework Deep-Dive</a>
+      <p class="footer-note">© 2026 Balto Advisory · All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
