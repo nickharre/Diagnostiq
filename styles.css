@@ -46,7 +46,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center;
   overflow: hidden; padding: 6rem 2rem 4rem;
 }
-#blizzard { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.3; }
+#heroCanvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.5; }
 .hero-content { position: relative; z-index: 2; text-align: center; max-width: 780px; }
 .hero-tag {
   font-size: 0.75rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
@@ -160,14 +160,25 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .analysing-overlay.hidden { display: none; }
 .analysing-content { text-align: center; }
-.analysing-dog {
-  width: 80px; height: 60px; color: var(--accent);
-  animation: dogPulse 1s ease-in-out infinite;
+.analysing-rings {
+  position: relative; width: 80px; height: 80px; margin: 0 auto;
 }
-@keyframes dogPulse {
-  0%, 100% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.12); opacity: 1; }
+.ring {
+  position: absolute; border-radius: 50%;
+  border: 2px solid transparent; border-top-color: var(--accent);
 }
+.ring-outer {
+  inset: 0; animation: spin 1.8s linear infinite;
+}
+.ring-middle {
+  inset: 10px; border-top-color: rgba(255, 92, 53, 0.5);
+  animation: spin 1.4s linear infinite reverse;
+}
+.ring-inner {
+  inset: 20px; border-top-color: rgba(255, 92, 53, 0.3);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 .analysing-label {
   margin-top: 1.5rem; font-size: 0.85rem; font-weight: 600;
   letter-spacing: 2px; text-transform: uppercase; color: var(--muted);

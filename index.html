@@ -19,7 +19,7 @@
 
   <!-- HERO -->
   <section class="hero" id="hero">
-    <canvas id="blizzard"></canvas>
+    <canvas id="heroCanvas"></canvas>
     <div class="hero-content">
       <p class="hero-tag">Infrastructure Advisory</p>
       <h1 class="hero-headline">Your Infrastructure Tax<br>is Measurable.<br><span class="accent">And Avoidable.</span></h1>
@@ -41,9 +41,7 @@
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
         <p class="step-label" id="stepLabel">Plan — Question 1 of 20</p>
       </div>
-      <div class="survey-body" id="surveyBody">
-        <!-- Steps injected by JS -->
-      </div>
+      <div class="survey-body" id="surveyBody"></div>
       <div class="survey-nav">
         <button class="btn-secondary" id="prevBtn" disabled>← Back</button>
         <button class="btn-primary" id="nextBtn">Next →</button>
@@ -54,24 +52,11 @@
   <!-- ANALYSING OVERLAY -->
   <section class="analysing-overlay hidden" id="analysingOverlay">
     <div class="analysing-content">
-      <svg class="analysing-dog" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <!-- Sled dog silhouette -->
-        <ellipse cx="38" cy="30" rx="20" ry="10" fill="currentColor" opacity="0.9"/>
-        <ellipse cx="58" cy="22" rx="8" ry="7" fill="currentColor" opacity="0.9"/>
-        <!-- Ear -->
-        <ellipse cx="62" cy="16" rx="3" ry="5" fill="currentColor" opacity="0.7" transform="rotate(-15 62 16)"/>
-        <!-- Eye -->
-        <circle cx="61" cy="21" r="1.5" fill="#1a1a1f"/>
-        <!-- Snout -->
-        <ellipse cx="66" cy="24" rx="4" ry="2.5" fill="currentColor" opacity="0.8"/>
-        <!-- Legs -->
-        <rect x="26" y="38" width="3" height="14" rx="1.5" fill="currentColor" opacity="0.8"/>
-        <rect x="34" y="38" width="3" height="14" rx="1.5" fill="currentColor" opacity="0.8"/>
-        <rect x="44" y="38" width="3" height="12" rx="1.5" fill="currentColor" opacity="0.8"/>
-        <rect x="50" y="38" width="3" height="12" rx="1.5" fill="currentColor" opacity="0.8"/>
-        <!-- Tail -->
-        <path d="M18 28 Q10 18 14 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.7"/>
-      </svg>
+      <div class="analysing-rings" aria-hidden="true">
+        <div class="ring ring-outer"></div>
+        <div class="ring ring-middle"></div>
+        <div class="ring ring-inner"></div>
+      </div>
       <p class="analysing-label">Analysing responses<span class="analysing-dots"><span>.</span><span>.</span><span>.</span></span></p>
     </div>
   </section>

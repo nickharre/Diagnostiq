@@ -1,11 +1,11 @@
 /* ===========================
-   BLIZZARD CANVAS ANIMATION
+   HERO CANVAS — NETWORK GRID
    =========================== */
-const canvas = document.getElementById('blizzard');
+const canvas = document.getElementById('heroCanvas');
 const ctx = canvas.getContext('2d');
-let particles = [];
-let dogs = [];
-const PARTICLE_COUNT = 180;
+const nodes = [];
+const NODE_COUNT = 60;
+const CONNECT_DIST = 140;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -14,79 +14,56 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  particles.push({
+for (let i = 0; i < NODE_COUNT; i++) {
+  nodes.push({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    r: Math.random() * 2 + 0.5,
-    dx: Math.random() * 2 + 1,
-    dy: Math.random() * 0.5 - 0.25,
-    o: Math.random() * 0.5 + 0.2,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    r: Math.random() * 1.5 + 0.8,
   });
 }
 
-const DOG_COUNT = 5;
-for (let i = 0; i < DOG_COUNT; i++) {
-  dogs.push({ offset: i * 48, phase: Math.random() * Math.PI * 2 });
-}
-
-function drawDog(x, y, phase) {
-  const legSwing = Math.sin(phase) * 6;
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.fillStyle = 'rgba(224,224,230,0.12)';
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 14, 6, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(16, -4, 5, 4, -0.3, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(224,224,230,0.12)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(-8, 5); ctx.lineTo(-8 - legSwing, 14);
-  ctx.moveTo(8, 5); ctx.lineTo(8 + legSwing, 14);
-  ctx.stroke();
-  ctx.restore();
-}
-
-let sledX = -200;
-function animateBlizzard() {
+function animateNetwork() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (const p of particles) {
+
+  // Update positions
+  for (const n of nodes) {
+    n.x += n.vx;
+    n.y += n.vy;
+    if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+    if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+  }
+
+  // Draw connections
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < CONNECT_DIST) {
+        const alpha = (1 - dist / CONNECT_DIST) * 0.12;
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x, nodes[i].y);
+        ctx.lineTo(nodes[j].x, nodes[j].y);
+        ctx.strokeStyle = `rgba(255, 92, 53, ${alpha})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Draw nodes
+  for (const n of nodes) {
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${p.o})`;
+    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(224, 224, 230, 0.25)';
     ctx.fill();
-    p.x += p.dx;
-    p.y += p.dy;
-    if (p.x > canvas.width + 10) { p.x = -10; p.y = Math.random() * canvas.height; }
-    if (p.y > canvas.height) p.y = 0;
-    if (p.y < 0) p.y = canvas.height;
   }
-  const baseY = canvas.height * 0.72;
-  sledX += 0.6;
-  if (sledX > canvas.width + 300) sledX = -300;
-  const time = performance.now() / 120;
-  for (const d of dogs) {
-    const dx = sledX - d.offset;
-    const bounce = Math.sin(time + d.phase) * 2;
-    drawDog(dx, baseY + bounce, time * 2 + d.phase);
-  }
-  ctx.save();
-  ctx.translate(sledX - DOG_COUNT * 48 - 20, baseY + 2);
-  ctx.fillStyle = 'rgba(224,224,230,0.08)';
-  ctx.fillRect(0, -4, 30, 8);
-  ctx.strokeStyle = 'rgba(224,224,230,0.08)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(30, 0);
-  ctx.lineTo(30 + DOG_COUNT * 48 - 20, 0);
-  ctx.stroke();
-  ctx.restore();
-  requestAnimationFrame(animateBlizzard);
+
+  requestAnimationFrame(animateNetwork);
 }
-animateBlizzard();
+animateNetwork();
 
 /* ===========================
    SURVEY ENGINE
@@ -178,9 +155,8 @@ function renderSteps() {
       </div>`;
   });
 
-  const budgetStep = allQuestions.length;
   html += `
-    <div class="survey-step" data-step="${budgetStep}">
+    <div class="survey-step" data-step="${allQuestions.length}">
       <div class="dim-badge">Value at Risk</div>
       <h3>What is the total project or programme budget?</h3>
       <p class="budget-hint">Enter the budget in dollars. This is used to calculate your Value at Risk.</p>
@@ -262,7 +238,6 @@ function calcResults() {
    SPRING PHYSICS UTILITY
    =========================== */
 function springAnimate(from, to, onUpdate, onDone) {
-  // Damped spring: stiffness 170, damping 14
   const stiffness = 170, damping = 14, mass = 1;
   let pos = from, vel = 0;
   const threshold = 0.01;
@@ -309,26 +284,18 @@ function showDashboard() {
 
   const results = calcResults();
 
-  // Stagger card reveals
   const cards = dash.querySelectorAll('.card');
   cards.forEach((card, i) => {
     setTimeout(() => card.classList.add('revealed'), i * 200);
   });
 
-  // Radar starts after first card reveals (200ms)
   setTimeout(() => drawRadar(results.dimScores), 200);
-
-  // Gauges with spring on tax risk
   setTimeout(() => drawGauges(results), 400);
-
-  // Frontline reality
   setTimeout(() => drawFrontline(results.dimScores), 600);
-
-  // Summary
   setTimeout(() => writeSummary(results.maturityPct, results.taxRiskPct, results.valueAtRisk), 800);
 }
 
-/* --- RADAR CHART (grow from centre) --- */
+/* --- RADAR CHART --- */
 function drawRadar(dimScores) {
   const rc = document.getElementById('radarChart');
   const c = rc.getContext('2d');
@@ -340,11 +307,9 @@ function drawRadar(dimScores) {
   const angleStep = (Math.PI * 2) / n;
   const startAngle = -Math.PI / 2;
 
-  // Use spring physics for the radar grow-out
   springAnimate(0, 1, (progress) => {
     c.clearRect(0, 0, W, H);
 
-    // Grid rings
     for (let ring = 1; ring <= 4; ring++) {
       const r = (R / 4) * ring;
       c.beginPath();
@@ -357,7 +322,6 @@ function drawRadar(dimScores) {
       c.stroke();
     }
 
-    // Axes + labels
     for (let i = 0; i < n; i++) {
       const a = startAngle + angleStep * i;
       c.beginPath(); c.moveTo(cx, cy);
@@ -373,8 +337,7 @@ function drawRadar(dimScores) {
       c.fillText(labels[i], lx, ly);
     }
 
-    // Data polygon — grows from centre via spring progress
-    const p = Math.max(0, Math.min(progress, 1.3)); // allow overshoot for bounce
+    const p = Math.max(0, Math.min(progress, 1.3));
     c.beginPath();
     for (let i = 0; i < n; i++) {
       const a = startAngle + angleStep * i;
@@ -388,7 +351,6 @@ function drawRadar(dimScores) {
     c.lineWidth = 2;
     c.stroke();
 
-    // Data points
     for (let i = 0; i < n; i++) {
       const a = startAngle + angleStep * i;
       const val = (scores[i] / 100) * R * p;
@@ -400,7 +362,7 @@ function drawRadar(dimScores) {
   });
 }
 
-/* --- GAUGES (spring bounce on Tax Risk) --- */
+/* --- GAUGES --- */
 function drawGauges({ dimScores, maturityPct, taxRiskPct, valueAtRisk }) {
   const container = document.getElementById('gauges');
   const fmt = n => n.toLocaleString('en-US', { maximumFractionDigits: 1 });
@@ -448,14 +410,12 @@ function drawGauges({ dimScores, maturityPct, taxRiskPct, valueAtRisk }) {
 
   container.innerHTML = html;
 
-  // Standard gauges — CSS transition
   requestAnimationFrame(() => {
     container.querySelectorAll('.gauge-fill:not(.spring)').forEach(el => {
       el.style.width = el.dataset.target + '%';
     });
   });
 
-  // Tax Risk gauge — spring physics bounce
   const taxFill = document.getElementById('taxRiskFill');
   const taxValue = document.getElementById('taxRiskValue');
   const varAmount = document.getElementById('varAmount');
@@ -507,13 +467,11 @@ function drawFrontline(dimScores) {
   `;
 
   requestAnimationFrame(() => {
-    const flPlan = document.getElementById('flPlan');
-    const flDo = document.getElementById('flDo');
-    flPlan.style.width = planScore + '%';
-    flDo.style.width = doScore + '%';
+    document.getElementById('flPlan').style.width = planScore + '%';
+    document.getElementById('flDo').style.width = doScore + '%';
     setTimeout(() => {
-      flPlan.classList.add('revealed');
-      flDo.classList.add('revealed');
+      document.getElementById('flPlan').classList.add('revealed');
+      document.getElementById('flDo').classList.add('revealed');
     }, 1200);
   });
 }
