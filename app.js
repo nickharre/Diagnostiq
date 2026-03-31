@@ -295,7 +295,7 @@ function showDashboard() {
   setTimeout(() => drawRadar(results.dimScores), 600);
   setTimeout(() => drawGauges(results), 800);
   setTimeout(() => drawFrontline(results.dimScores), 1000);
-  setTimeout(() => writeSummary(results.maturityPct, results.taxRiskPct, results.valueAtRisk), 1200);
+  setTimeout(() => writeSummary(results), 1200);
 }
 
 /* --- RADAR CHART (service quad colours) --- */
@@ -508,25 +508,45 @@ function drawFrontline(dimScores) {
 }
 
 /* --- SUMMARY --- */
-function writeSummary(maturityPct, taxRiskPct, valueAtRisk) {
+function writeSummary({ dimScores, maturityPct, taxRiskPct, valueAtRisk }) {
   const el = document.getElementById('summaryText');
   const badge = document.getElementById('scoreBadge');
+  const fmtCurrency = n => '$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
   let level, cls, text;
 
   if (maturityPct >= 66) {
     level = 'Low Risk'; cls = 'score-low';
-    text = 'Your infrastructure programme demonstrates strong maturity across planning, capability, delivery, and review. Maintain current disciplines and focus on continuous improvement to sustain this position.';
+    text = 'Your infrastructure programme demonstrates strong maturity across planning, capability, delivery, and review.';
   } else if (maturityPct >= 33) {
     level = 'Moderate Risk'; cls = 'score-med';
-    text = 'There are material gaps in your infrastructure maturity that create delivery and fiscal risk. Targeted improvements in your weakest dimensions could significantly reduce cost overruns and service disruptions.';
+    text = 'There are material gaps in your infrastructure maturity that create delivery and fiscal risk.';
   } else {
     level = 'High Risk'; cls = 'score-high';
-    text = 'Your infrastructure programme faces significant maturity challenges across multiple dimensions. Without intervention, project delays, cost escalation, and asset failures are likely. A structured remediation programme is recommended.';
+    text = 'Your infrastructure programme faces significant maturity challenges across multiple dimensions. Without intervention, project delays, cost escalation, and asset failures are likely.';
+  }
+
+  // Always identify weakest dimension and frame as opportunity
+  const weakest = dimKeys.reduce((a, b) => dimScores[a] < dimScores[b] ? a : b);
+  const weakScore = Math.round(dimScores[weakest]);
+  const strongest = dimKeys.reduce((a, b) => dimScores[a] > dimScores[b] ? a : b);
+  const strongScore = Math.round(dimScores[strongest]);
+  const gap = strongScore - weakScore;
+
+  const dimInsights = {
+    plan: 'strategic planning and long-term investment foresight',
+    can: 'organisational capability and delivery capacity',
+    do: 'on-the-ground execution and project delivery',
+    review: 'post-delivery review and continuous improvement',
+  };
+
+  if (gap > 10) {
+    text += ` Your strongest dimension is ${dimensions[strongest].label} (${strongScore}%), but ${dimensions[weakest].label} lags at ${weakScore}% — a ${gap}-point gap. Strengthening ${dimInsights[weakest]} represents the highest-leverage opportunity to reduce overall programme risk.`;
+  } else {
+    text += ` Scores are relatively balanced, with ${dimensions[weakest].label} (${weakScore}%) as the area with most room for improvement. Even incremental gains in ${dimInsights[weakest]} would reduce residual risk.`;
   }
 
   if (projectBudget > 0) {
-    const fmtCurrency = n => '$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
-    text += ` With a project budget of ${fmtCurrency(projectBudget)}, an estimated ${fmtCurrency(valueAtRisk)} is at risk due to infrastructure immaturity.`;
+    text += ` With a programme budget of ${fmtCurrency(projectBudget)}, an estimated ${fmtCurrency(valueAtRisk)} is exposed to infrastructure immaturity risk.`;
   }
 
   el.textContent = text;
