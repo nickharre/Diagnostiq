@@ -303,7 +303,7 @@ function drawRadar(dimScores) {
   const rc = document.getElementById('radarChart');
   const c = rc.getContext('2d');
   const W = rc.width, H = rc.height;
-  const cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 40;
+  const cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 55;
   const labels = dimKeys.map(dk => dimensions[dk].label);
   const scores = dimKeys.map(dk => dimScores[dk]);
   const colors = dimKeys.map(dk => dimColors[dk]);
@@ -336,11 +336,19 @@ function drawRadar(dimScores) {
       c.lineWidth = 0.5;
       c.stroke();
 
-      const lx = cx + Math.cos(a) * (R + 24);
-      const ly = cy + Math.sin(a) * (R + 24);
+      let lx = cx + Math.cos(a) * (R + 32);
+      const ly = cy + Math.sin(a) * (R + 32);
       c.fillStyle = colors[i];
       c.font = '600 12px Inter';
-      c.textAlign = 'center';
+      if (lx < cx - 10) {
+        c.textAlign = 'left';
+        lx = Math.max(4, lx);
+      } else if (lx > cx + 10) {
+        c.textAlign = 'right';
+        lx = Math.min(W - 4, lx);
+      } else {
+        c.textAlign = 'center';
+      }
       c.textBaseline = 'middle';
       c.fillText(labels[i], lx, ly);
     }
