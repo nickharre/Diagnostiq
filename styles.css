@@ -190,15 +190,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .analysing-overlay.hidden { display: none; }
 .analysing-content { text-align: center; position: relative; }
-.analysing-watermark {
-  width: 200px; height: 100px; color: var(--text-muted);
-  margin-bottom: 2rem; opacity: 0.5;
-  animation: watermarkPulse 2s ease-in-out infinite;
-}
-@keyframes watermarkPulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
-}
 .analysing-rings {
   position: relative; width: 64px; height: 64px; margin: 0 auto;
 }
